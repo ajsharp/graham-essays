@@ -14,6 +14,7 @@ $(error Unsupported operating system: $(UNAME_S))
 endif
 
 all: dependencies clean venv fetch merge epub wordcount
+download: dependencies clean venv fetch
 
 clean:
 	@echo "🗑 Cleaning up the room..."
@@ -41,6 +42,16 @@ epub: merge
 	@echo "📒 Binding EPUB... "
 	pandoc essays/*.md -o graham.epub -f markdown_strict --metadata-file=metadata.yaml --toc --toc-depth=1 --epub-cover-image=cover.png
 	@echo "🎉 EPUB file created."
+
+epub2:
+	@echo "📒 Binding EPUB... "
+	cat essay-list.txt | xargs pandoc -o selected-pg-essays.epub -f markdown_strict --metadata-file=metadata.yaml --toc --toc-depth=2 -s --epub-cover-image=cover.png
+	@echo "🎉 EPUB file created."
+	
+pdf2: epub2
+	@echo "📒 Binding PDF... "
+	pandoc selected-pg-essays.epub -o book/selected-pg-essays.pdf --metadata-file=metadata.yaml --toc --toc-depth=1
+	@echo "🎉 PDF file created."
 
 pdf: epub
 	@echo "📒 Binding PDF... "
